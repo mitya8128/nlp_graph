@@ -136,3 +136,8 @@ def getList(dict):
         list.append(key)
 
     return list
+
+
+def clean_numbers(text):
+    text = re.sub(r'[0-9]+', '', text)
+    return text
