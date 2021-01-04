@@ -82,7 +82,7 @@ def adjacency_mat(vertices_list):
     for i in vertices_list:
         for j in vertices_list:
             adj_vec = []
-            vec = cosine(model[i], model[j])
+            vec = cosine(vectorize_word(i), vectorize_word(j))
             adj_vec.append(vec)
             adj_mat.append(adj_vec)
 
@@ -115,15 +115,15 @@ def make_graph(mat, vertices_list, th):
 def draw_graph(graph, node_size, alpha, show_weights=False):
     '''draw graph: specify size of nodes and transparency of edges'''
 
-    labels = nx.get_edge_attributes(H, 'weight')
+    labels = nx.get_edge_attributes(graph, 'weight')
     pos = nx.spring_layout(graph)
     plt.figure()
     nx.draw(graph, pos, edge_color='black', width=1, linewidths=1,
             node_size=node_size, node_color='pink', alpha=alpha,
-            labels={node: node for node in H.nodes()})
+            labels={node: node for node in graph.nodes()})
 
     if show_weights:
-        nx.draw_networkx_edge_labels(H, pos=pos, edge_labels=labels)
+        nx.draw_networkx_edge_labels(graph, pos=pos, edge_labels=labels)
     else:
         pass
 
@@ -141,3 +141,13 @@ def getList(dict):
 def clean_numbers(text):
     text = re.sub(r'[0-9]+', '', text)
     return text
+
+
+def vectorize_word(word):
+    '''vectorize word with unknown word handler'''
+    try:
+        vec = model[word]
+    except KeyError:
+        vec = np.random.normal(0, np.sqrt(0.25), 300)
+
+    return vec
