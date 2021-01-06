@@ -151,3 +151,18 @@ def vectorize_word(word):
         vec = np.random.normal(0, np.sqrt(0.25), 300)
 
     return vec
+
+
+def metric_filtration(text_mat, text_tagged):
+    '''filtration by metric value'''
+    average_clustering = {}
+    for i in np.arange(0.1, 0.9, 0.1):
+        graph = make_graph(text_mat, text_tagged, i)
+        average_clustering['threshold_{}'.format(i)] = nx.average_clustering(graph)
+    return average_clustering
+
+
+def draw_filtration_metric(average_clustering):
+    '''draw graph of metric filtration'''
+    plt.bar(range(len(average_clustering)), list(average_clustering.values()), align='center')
+    plt.xticks(range(len(average_clustering)), list(average_clustering.keys()))
