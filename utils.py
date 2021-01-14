@@ -10,7 +10,7 @@ from string import punctuation
 
 import matplotlib.pyplot as plt
 import re
-from collections import Counter
+import random
 morph = MorphAnalyzer()
 to_ud = converters.converter('opencorpora-int', 'ud20')
 
@@ -166,3 +166,12 @@ def draw_filtration_metric(average_clustering):
     '''draw graph of metric filtration'''
     plt.bar(range(len(average_clustering)), list(average_clustering.values()), align='center')
     plt.xticks(range(len(average_clustering)), list(average_clustering.keys()))
+
+
+def generate_random(list):
+    '''generate random equal-length list from POS-tagged text'''
+    newlist = []
+    for i in range(len(list)):
+        element = random.choice(list)
+        newlist.append(element)
+    return newlist
