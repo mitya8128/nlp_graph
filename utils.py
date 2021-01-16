@@ -178,7 +178,7 @@ def generate_random(list):
 
 
 def select_triangles(list, n):
-    '''select n-cliques'''
+    '''select n-dimensional cliques'''
     triangles = []
     for i in list:
         if len(i) == n:
