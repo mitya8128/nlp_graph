@@ -175,3 +175,12 @@ def generate_random(list):
         element = random.choice(list)
         newlist.append(element)
     return newlist
+
+
+def select_triangles(list, n):
+    '''select n-cliques'''
+    triangles = []
+    for i in list:
+        if len(i) == n:
+            triangles.append(i)
+    return triangles
