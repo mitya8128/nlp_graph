@@ -11,20 +11,21 @@ from string import punctuation
 import matplotlib.pyplot as plt
 import re
 import random
+
 morph = MorphAnalyzer()
 to_ud = converters.converter('opencorpora-int', 'ud20')
 
-
-
 stops = stopwords.stopwords("ru")
 added_stops = {'весь', 'это', 'наш', 'оно', 'итак', 'т.п', 'т.е', 'мало', 'меньше', 'ещё', 'слишком', 'также',
-                   'ваш', 'б', 'хм', 'который', 'свой', 'не', 'мочь', 'однако', 'очень', 'благодаря', 'кроме', 'вся',
-              'какие', 'ru', 'en', 'млрд', 'млн', 'нет','этот','мной', 'дело', 'был', 'долго', 'наша', 'самих', 'миллионов', 'самых', 'ост', 'ст', 'д', 'проспект', 'компания', 'компании', 'компанию', 'компанией', 'компаниям', 'e-mail',  'шаг', 'ул', 'rus', 'eng', 'проезд', 'площадь', 'cookies', 'куки', 'кг', 'xl', 'rss', 'amp', ';amp', 'pdf', 'doc', 'txt', 'docx', 'i', 'id',
-              'бывший'}
+               'ваш', 'б', 'хм', 'который', 'свой', 'не', 'мочь', 'однако', 'очень', 'благодаря', 'кроме', 'вся',
+               'какие', 'ru', 'en', 'млрд', 'млн', 'нет', 'этот', 'мной', 'дело', 'был', 'долго', 'наша', 'самих',
+               'миллионов', 'самых', 'ост', 'ст', 'д', 'проспект', 'компания', 'компании', 'компанию', 'компанией',
+               'компаниям', 'e-mail', 'шаг', 'ул', 'rus', 'eng', 'проезд', 'площадь', 'cookies', 'куки', 'кг', 'xl',
+               'rss', 'amp', ';amp', 'pdf', 'doc', 'txt', 'docx', 'i', 'id',
+               'бывший'}
 
 stops = stops.union(added_stops)
-punct = punctuation+'«»—…“”*№–'
-
+punct = punctuation + '«»—…“”*№–'
 
 model_path = '/home/mitya/PycharmProjects/nlp_graph/model.bin'
 model = KeyedVectors.load_word2vec_format(model_path, binary=True)
@@ -54,7 +55,7 @@ def cosine(a, b):
 
 
 def similar_words(text, n):
-    '''return n most similar words in models dictionary'''
+    """return n most similar words in models dictionary"""
 
     lst = model.most_similar(pymorphy_tagger(text), topn=n)
 
@@ -66,7 +67,7 @@ def diff(text1, text2):
 
 
 def vertices(text, n):
-    '''return list of vertices based on similar_words function'''
+    """return list of vertices based on similar_words function"""
 
     vertices = similar_words(text, n)
     vertices_list = [vertices[0] for vertices in vertices]
@@ -75,7 +76,7 @@ def vertices(text, n):
 
 
 def adjacency_mat(vertices_list):
-    '''make matrix of distances between words'''
+    """make matrix of distances between words"""
 
     n = len(vertices_list)
     adj_mat = []
@@ -90,7 +91,7 @@ def adjacency_mat(vertices_list):
 
 
 def make_graph(mat, vertices_list, th):
-    '''make graph with edges between vertices based on adjacency_mat function'''
+    """make graph with edges between vertices based on adjacency_mat function"""
 
     G = nx.from_numpy_matrix(mat)
     mapping = dict(zip(G, vertices_list))
@@ -113,7 +114,7 @@ def make_graph(mat, vertices_list, th):
 
 
 def draw_graph(graph, node_size, alpha, show_weights=False):
-    '''draw graph: specify size of nodes and transparency of edges'''
+    """draw graph: specify size of nodes and transparency of edges"""
 
     labels = nx.get_edge_attributes(graph, 'weight')
     pos = nx.spring_layout(graph)
@@ -130,9 +131,20 @@ def draw_graph(graph, node_size, alpha, show_weights=False):
     plt.show()
 
 
-def getList(dict):
+def text2graph(text, th):
+    """full pipeline to make graph from text"""
+
+    text_tagged = pymorphy_tagger(clean_numbers(text))
+    text_tagged = text_tagged.split()
+    text_mat = adjacency_mat(text_tagged)
+    graph = make_graph(text_mat, text_tagged, th)
+
+    return graph
+
+
+def getList(dct):
     list = []
-    for key in dict.keys():
+    for key in dct.keys():
         list.append(key)
 
     return list
@@ -144,7 +156,7 @@ def clean_numbers(text):
 
 
 def vectorize_word(word):
-    '''vectorize word with unknown word handler'''
+    """vectorize word with unknown word handler"""
     try:
         vec = model[word]
     except KeyError:
@@ -154,7 +166,7 @@ def vectorize_word(word):
 
 
 def metric_filtration(text_mat, text_tagged):
-    '''filtration by metric value'''
+    """filtration by metric value"""
     average_clustering = {}
     for i in np.arange(0.1, 0.9, 0.1):
         graph = make_graph(text_mat, text_tagged, i)
@@ -163,24 +175,24 @@ def metric_filtration(text_mat, text_tagged):
 
 
 def draw_filtration_metric(average_clustering):
-    '''draw graph of metric filtration'''
+    """draw graph of metric filtration"""
     plt.bar(range(len(average_clustering)), list(average_clustering.values()), align='center')
     plt.xticks(range(len(average_clustering)), list(average_clustering.keys()))
 
 
-def generate_random(list):
-    '''generate random equal-length list from POS-tagged text'''
+def generate_random(lst):
+    """generate random equal-length list from POS-tagged text"""
     newlist = []
-    for i in range(len(list)):
-        element = random.choice(list)
+    for i in range(len(lst)):
+        element = random.choice(lst)
         newlist.append(element)
     return newlist
 
 
-def select_triangles(list, n):
-    '''select n-dimensional cliques'''
+def select_triangles(lst, n):
+    """select n-dimensional cliques"""
     triangles = []
-    for i in list:
+    for i in lst:
         if len(i) == n:
             triangles.append(i)
     return triangles
