@@ -1,16 +1,16 @@
+import re
+import random
+
 import numpy as np
 from gensim.models.keyedvectors import KeyedVectors
 import networkx as nx
 import nltk
 from pymorphy2 import MorphAnalyzer
 from russian_tagsets import converters
-
 import stopwordsiso as stopwords
 from string import punctuation
-
 import matplotlib.pyplot as plt
-import re
-import random
+
 
 morph = MorphAnalyzer()
 to_ud = converters.converter('opencorpora-int', 'ud20')
@@ -202,3 +202,23 @@ def jaccard_similarity(g, h):
     """Jaccard distance between graphs"""
     i = set(g).intersection(h)
     return round(len(i) / (len(g) + len(h) - len(i)),3)
+
+
+def average_distance(df, topic):
+    """computes average distance between text-graphs inside topics"""
+    df_topic = df[df['topic'] == topic]
+
+    texts = df_topic['text'].tolist()
+
+    list_graphs = []
+    for i in range(len(texts)):
+        graph = text2graph(texts[i], 0.1)
+        list_graphs.append(graph)
+
+    list_dist = []
+    for i in list_graphs:
+        for j in list_graphs:
+            dist = jaccard_similarity(i, j)
+            list_dist.append(dist)
+
+    return sum(list_dist)
