@@ -221,4 +221,4 @@ def average_distance(df, topic):
             dist = jaccard_similarity(i, j)
             list_dist.append(dist)
 
-    return sum(list_dist)
+    return round((sum(list_dist) / len(list_dist)), 3)
