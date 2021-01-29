@@ -196,3 +196,9 @@ def select_triangles(lst, n):
         if len(i) == n:
             triangles.append(i)
     return triangles
+
+
+def jaccard_similarity(g, h):
+    """Jaccard distance between graphs"""
+    i = set(g).intersection(h)
+    return round(len(i) / (len(g) + len(h) - len(i)),3)
