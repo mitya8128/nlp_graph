@@ -204,11 +204,21 @@ def jaccard_similarity(g, h):
     return round(len(i) / (len(g) + len(h) - len(i)),3)
 
 
-def average_distance(df, topic):
-    """computes average distance between text-graphs inside topics"""
+def average_distance(df, topic, column, func):
+    """
+    computes average distance by the chosen metric between text-graphs of certain topic.
+
+    arguments:
+    df -- dataframe to analyze
+    topic -- class of texts to choose
+    column -- column to analyze
+    func -- metric to use
+
+    """
+
     df_topic = df[df['topic'] == topic]
 
-    texts = df_topic['text'].tolist()
+    texts = df_topic[column].tolist()
 
     list_graphs = []
     for i in range(len(texts)):
@@ -218,7 +228,7 @@ def average_distance(df, topic):
     list_dist = []
     for i in list_graphs:
         for j in list_graphs:
-            dist = jaccard_similarity(i, j)
+            dist = func(i, j)
             list_dist.append(dist)
 
     return round((sum(list_dist) / len(list_dist)), 3)
