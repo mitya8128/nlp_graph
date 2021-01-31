@@ -232,3 +232,24 @@ def average_distance(df, topic, column, func):
             list_dist.append(dist)
 
     return round((sum(list_dist) / len(list_dist)), 3)
+
+
+def preprocess_query(text, func, th):
+    """
+    preprocess query: convert to graph and then compute specific graph metric
+
+    arguments:
+    text -- text to preprocess
+    func -- function to compute graph characteristics
+    th -- threshold for text2graph algorithm
+
+    """
+    return func(text2graph(text, th))
+
+
+def find_closest(query, func, df, th):
+    """find closest text in terms of specified metric"""
+
+    query_preproc = preprocess_query(query, func, th)
+    df['result'] = df['dist'].apply(lambda x: abs(query_preproc - x))
+    return df.sort_values('result')['text']
