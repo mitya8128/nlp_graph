@@ -22,7 +22,7 @@ def filter_duplicates(dct) -> dict:
 
 
 # func that returns n-edge with max weight
-def max_weight(graph):
+def max_weight(graph) -> list:
     """returns edge with max weight"""
     labels = nx.get_edge_attributes(graph, 'weight')
     labels_filtered = filter_duplicates(labels)
@@ -30,7 +30,14 @@ def max_weight(graph):
     return max_edge
 
 
-# func that finds maximun simplex of graph
+# func that finds maximum simplex of graph
 def max_simplex(graph):
     pass
 
+
+def sorted_weights(graph) -> list:
+    """returns list with edges sorted by their weights"""
+    labels = nx.get_edge_attributes(graph, 'weight')
+    labels_filtered = filter_duplicates(labels)
+    sorted_edges = sorted(labels_filtered.items(), key=operator.itemgetter(1), reverse=True)
+    return sorted_edges
