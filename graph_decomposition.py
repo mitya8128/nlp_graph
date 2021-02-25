@@ -41,3 +41,15 @@ def sorted_weights(graph) -> list:
     labels_filtered = filter_duplicates(labels)
     sorted_edges = sorted(labels_filtered.items(), key=operator.itemgetter(1), reverse=True)
     return sorted_edges
+
+
+def find_cliques_all(graph) -> list:
+    """simple interface for nx function
+    returns list of all cliques"""
+    return list(nx.algorithms.clique.find_cliques(graph))
+
+
+def get_weight(labels, a, b) -> float:
+    """get weight of specific edge"""
+    tpl = (a,b)
+    return labels[tpl]
