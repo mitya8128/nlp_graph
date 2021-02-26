@@ -1,5 +1,7 @@
 import networkx as nx
+from networkx.algorithms.approximation import clique
 import operator
+from utils import*
 
 
 def check_duplicates(tpl):
@@ -49,7 +51,31 @@ def find_cliques_all(graph) -> list:
     return list(nx.algorithms.clique.find_cliques(graph))
 
 
+def find_max_clique(graph) -> set:
+    """simple interface for nx function
+        returns max clique"""
+    return clique.max_clique(graph)
+
+
 def get_weight(labels, a, b) -> float:
     """get weight of specific edge"""
     tpl = (a,b)
     return labels[tpl]
+
+
+def clique_weights(clique):
+    """returns sum of all edges of clique"""
+    vec_clique = []
+    for i in clique:
+        vec_word = []
+        for j in clique:
+            vec = cosine(model[i], model[j])
+            vec_word.append(vec)
+        vec_clique.append(vec_word)
+
+    sum_all = []
+    for i in range(len(vec_clique)):
+        sum_i = sum(vec_clique[i])
+        sum_all.append(sum_i)
+
+    return sum(sum_all)
