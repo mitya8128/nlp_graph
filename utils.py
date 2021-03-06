@@ -54,6 +54,10 @@ def cosine(a, b):
     return cos
 
 
+def cos_sim(a, b):
+    return np.dot(a, b)/(np.linalg.norm(a)*np.linalg.norm(b))
+
+
 def similar_words(text, n):
     """return n most similar words in models dictionary"""
 
@@ -77,7 +81,6 @@ def vertices(text, n):
 
 def adjacency_mat(vertices_list):
     """make matrix of distances between words"""
-
     n = len(vertices_list)
     adj_mat = []
     for i in vertices_list:
@@ -131,11 +134,13 @@ def draw_graph(graph, node_size, alpha, show_weights=False):
     plt.show()
 
 
-def text2graph(text, th):
+def text2graph(text, th, raw=True):
     """full pipeline to make graph from text"""
-
-    text_tagged = pymorphy_tagger(clean_numbers(text))
-    text_tagged = text_tagged.split()
+    if raw:
+        text_tagged = pymorphy_tagger(clean_numbers(text))
+        text_tagged = text_tagged.split()
+    else:
+        text_tagged = list(text)
     text_mat = adjacency_mat(text_tagged)
     graph = make_graph(text_mat, text_tagged, th)
 
@@ -253,3 +258,10 @@ def find_closest(query, func, df, th):
     query_preproc = preprocess_query(query, func, th)
     df['result'] = df['dist'].apply(lambda x: abs(query_preproc - x))
     return df.sort_values('result')['text']
+
+
+#TODO
+# split to several thematic scripts
+# next procedure for decomposition -> max-clique of max clique and so on
+# try geodesic distance between vectors
+# https://arxiv.org/pdf/1810.10136.pdf
