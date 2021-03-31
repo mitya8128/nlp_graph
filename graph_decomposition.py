@@ -1,5 +1,6 @@
 import networkx as nx
 from networkx.algorithms.approximation import clique
+from networkx.algorithms.clique import find_cliques
 import operator
 from utils import*
 
@@ -79,3 +80,28 @@ def clique_weights(clique):
         sum_all.append(sum_i)
 
     return sum(sum_all)
+
+
+def find_maxlen_clique(text, i, raw) -> list:
+    """find clique with max len"""
+    grph = text2graph(text, i, raw=raw)
+
+    list_cliques = list(find_cliques(grph))
+    list_cliques_len = []
+    for i in range(len(list_cliques)):
+        len_elmnt = len(list_cliques[i])
+        list_cliques_len.append(len_elmnt)
+    index, value = max(enumerate(list_cliques_len), key=operator.itemgetter(1))
+    return list_cliques[index]
+
+
+def get_abstract(text) -> set:
+    """return 'abstract' of text"""
+    list_dicts_enumerate = []
+
+    for i in np.arange(0.1, 0.9, 0.1):
+        clq = find_maxlen_clique(text, i, raw=True)
+        list_dicts_enumerate.append(clq)
+    z = set(list_dicts_enumerate[0]).intersection(set(list_dicts_enumerate[1]))
+
+    return z
