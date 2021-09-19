@@ -165,7 +165,7 @@ def vectorize_word(word):
     try:
         vec = model[word]
     except KeyError:
-        vec = np.random.normal(0, np.sqrt(0.25), 300)
+        vec = np.zeros(300)
 
     return vec
 
