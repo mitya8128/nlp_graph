@@ -1,0 +1,8 @@
+gensim
+networkx
+nltk
+numpy
+pymorphy2
+russian_tagsets
+stopwordsiso
+matplotlib
